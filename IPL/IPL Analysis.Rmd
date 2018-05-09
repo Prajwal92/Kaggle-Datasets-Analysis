@@ -1,0 +1,52 @@
+---
+title: "IPL Analysis"
+author: "Prajwal Nagaraju"
+date: "March 16, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(ggplot2) # Data visualization
+library(readr) # CSV file I/O, e.g. the read_csv function
+#library(plyr)
+library(dplyr)
+library(gridExtra)
+library(treemap)
+library(RColorBrewer)
+library(tidyr)
+library(radarchart)
+
+deliveries<-read.csv("deliveries.csv")
+matches<-read.csv("matches.csv")
+matches<-matches[matches$result=="normal",]
+# Any results you write to the current directory are saved as output.
+```
+
+#Number of matches played in different cities
+```{r}
+ggplot(matches[which(!is.na(matches$city)),],aes(city,fill= city,rm.na=T)) +geom_bar() +
+theme(axis.text.x = element_text(angle = 90, hjust = 1))+ 
+ylab("Number of Matches Played") +
+guides(fill=FALSE)
+
+```
+
+#Number of matches played in different stadiums
+```{r}
+ggplot(matches,aes(venue, rm.na=T)) +geom_bar(fill="#0072B2") +
+theme(axis.text.x = element_text(angle = 90, hjust = 1))+ 
+ylab("Number of Matches Played")
+```
+
+#Is winning the toss really an advantage?
+```{r}
+matches$toss_match <- ifelse(as.character(matches$toss_winner) == as.character(matches$winner), "Won", "Lost")
+
+ggplot(matches[which(!is.na(matches$toss_match)), ], aes(toss_match, fill = toss_match)) +geom_bar()+ xlab("Toss") +ylab("Number of matches won")+ ggtitle("How much of a advantage is winning the toss")
+```
+
